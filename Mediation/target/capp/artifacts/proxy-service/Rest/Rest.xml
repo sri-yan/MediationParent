@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="Rest" startOnLoad="true" trace="disable"
+  transports="https http" xmlns="http://ws.apache.org/ns/synapse">
+  <target>
+    <inSequence>
+      <property name="enclosing_element" scope="default">
+        <result xmlns=""/>
+      </property>
+      <clone>
+        <target>
+          <sequence>
+            <call>
+              <endpoint>
+                <address format="rest" trace="disable" uri="http://localhost:8082/SpringRestfulWebServicesWithJSONExample/country/1"/>
+              </endpoint>
+            </call>
+            <payloadFactory media-type="xml">
+              <format>
+                <country xmlns="">$1</country>
+              </format>
+              <args>
+                <arg evaluator="xml"
+                  expression="$body//jsonObject/countryName" xmlns:ns="http://org.apache.synapse/xsd"/>
+              </args>
+            </payloadFactory>
+            <property name="countryName" scope="default" type="STRING" value="value"/>
+            <log level="custom">
+              <property expression="get-property('countryName')" name="countryName"/>
+            </log>
+          </sequence>
+        </target>
+        <target>
+          <sequence>
+            <call>
+              <endpoint>
+                <address format="rest" trace="disable" uri="http://localhost:8082/SpringRestfulWebServicesWithJSONExample/countries"/>
+              </endpoint>
+            </call>
+            <payloadFactory media-type="xml">
+              <format>
+                <continent xmlns="">$1</continent>
+              </format>
+              <args>
+                <arg evaluator="xml"
+                  expression="$body//jsonObject/continentName" xmlns:ns="http://org.apache.synapse/xsd"/>
+              </args>
+            </payloadFactory>
+          </sequence>
+        </target>
+      </clone>
+      <log level="full" separator=",">
+        <property name="STATUS" value="+0000000000000 Before Aggregating responses back in Proxy Service ++++++++++++++++++"/>
+      </log>
+      <property name="ECNCLOSING_ELEMENT" scope="default">
+        <wrapper xmlns=""/>
+      </property>
+      <aggregate>
+        <completeCondition>
+          <messageCount max="2" min="2"/>
+        </completeCondition>
+        <onComplete enclosingElementProperty="ECNCLOSING_ELEMENT" expression="$body/*">
+          <log level="full" separator=",">
+            <property name="STATUS" value="+++++++++++++++++Before Aggregating responses back in Proxy Service ++++++++++++++++++"/>
+          </log>
+          <loopback/>
+        </onComplete>
+      </aggregate>
+    </inSequence>
+    <outSequence>
+      <send/>
+    </outSequence>
+    <faultSequence/>
+  </target>
+</proxy>
