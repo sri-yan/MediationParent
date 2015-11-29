@@ -23,7 +23,6 @@
                   expression="$body//jsonObject/countryName" xmlns:ns="http://org.apache.synapse/xsd"/>
               </args>
             </payloadFactory>
-            <property name="countryName" scope="default" type="STRING" value="value"/>
             <log level="custom">
               <property expression="get-property('countryName')" name="countryName"/>
             </log>
@@ -62,11 +61,38 @@
           <log level="full" separator=",">
             <property name="STATUS" value="+++++++++++++++++Before Aggregating responses back in Proxy Service ++++++++++++++++++"/>
           </log>
+          <log level="full">
+            <property expression="get-property('countryName')" name="Request Payload"/>
+          </log>
+          <property expression="//country" name="c1" scope="default" type="STRING"/>
+          <property expression="//continent" name="c2" scope="default" type="STRING"/>
+          <payloadFactory media-type="xml">
+            <format>
+              <response>
+                <customer>
+                  <cntry>$1</cntry>
+                  <contnt>$2</contnt>
+                  <city>Hyderabad</city>
+                </customer>
+              </response>
+            </format>
+            <args>
+              <arg evaluator="xml" expression="$ctx:c1"/>
+              <arg evaluator="xml" expression="$ctx:c2"/>
+            </args>
+          </payloadFactory>
+          <log level="full">
+            <property name="STATUS" value="========================After Aggregating responses back in Proxy Service ++++++++++++++++++"/>
+          </log>
           <loopback/>
         </onComplete>
       </aggregate>
     </inSequence>
     <outSequence>
+      <log level="full" separator=",">
+        <property expression="get-property('countryName')" name="Request Payload"/>
+      </log>
+      <log/>
       <send/>
     </outSequence>
     <faultSequence/>
