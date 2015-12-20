@@ -10,6 +10,7 @@
   <description>MediationProject</description>  
   <properties>
     <com.example.Mediation.proxy-service_._Rest>capp/EnterpriseServiceBus</com.example.Mediation.proxy-service_._Rest>
+    <com.example.MediationResource.resource_._XSLTResource>capp/EnterpriseServiceBus</com.example.MediationResource.resource_._XSLTResource>
   </properties>
   <dependencies>
     <dependency>
@@ -19,6 +20,14 @@
       <type>xml</type>
       <scope>system</scope>
       <systemPath>${basedir}/../Mediation/target/capp/artifacts/proxy-service/Rest/pom.xml</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>com.example.MediationResource.resource</groupId>
+      <artifactId>XSLTResource</artifactId>
+      <version>1.0.0</version>
+      <type>zip</type>
+      <scope>system</scope>
+      <systemPath>${basedir}/../MediationResource/target/capp/artifacts/resource/XSLTResource/pom.xml</systemPath>
     </dependency>
   </dependencies>
   <repositories>

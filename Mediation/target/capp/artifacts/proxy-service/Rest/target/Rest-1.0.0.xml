@@ -11,7 +11,7 @@
           <sequence>
             <call>
               <endpoint>
-                <address format="rest" trace="disable" uri="http://localhost:8082/SpringRestfulWebServicesWithJSONExample/country/1"/>
+                <address format="rest" trace="disable" uri="http://localhost:8082/SpringRestfulWebServicesWithJSONExample/country"/>
               </endpoint>
             </call>
             <payloadFactory media-type="xml">
@@ -24,7 +24,7 @@
               </args>
             </payloadFactory>
             <log level="custom">
-              <property expression="get-property('countryName')" name="countryName"/>
+              <property expression="get-property('country')" name="country"/>
             </log>
           </sequence>
         </target>
@@ -48,7 +48,7 @@
         </target>
       </clone>
       <log level="full" separator=",">
-        <property name="STATUS" value="+0000000000000 Before Aggregating responses back in Proxy Service ++++++++++++++++++"/>
+        <property name="STATUS" value="+000000000000 Before Aggregating responses back in Proxy Service ++++++++++++++++++"/>
       </log>
       <property name="ECNCLOSING_ELEMENT" scope="default">
         <wrapper xmlns=""/>
@@ -61,10 +61,16 @@
           <log level="full" separator=",">
             <property name="STATUS" value="+++++++++++++++++Before Aggregating responses back in Proxy Service ++++++++++++++++++"/>
           </log>
-          <log level="full">
-            <property expression="get-property('countryName')" name="Request Payload"/>
-          </log>
-          <property expression="//country" name="c1" scope="default" type="STRING"/>
+          <filter xpath="//country/text()">
+            <then>
+              <property description="" expression="//country" name="c1"
+                scope="default" type="STRING"/>
+            </then>
+            <else>
+              <property description="" name="c1" scope="default"
+                type="STRING" value=""/>
+            </else>
+          </filter>
           <property expression="//continent" name="c2" scope="default" type="STRING"/>
           <payloadFactory media-type="xml">
             <format>
@@ -82,6 +88,13 @@
             </args>
           </payloadFactory>
           <log level="full">
+            <property expression="get-property('c1')" name="c1"/>
+          </log>
+          <xslt key="conf:/repository/xslts/XSLTResource.xslt">
+            <property expression="get-property('c1')" name="c1"/>
+            <property expression="get-property('c2')" name="c2"/>
+          </xslt>
+          <log level="full">
             <property name="STATUS" value="========================After Aggregating responses back in Proxy Service ++++++++++++++++++"/>
           </log>
           <loopback/>
@@ -89,6 +102,7 @@
       </aggregate>
     </inSequence>
     <outSequence>
+      <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
       <log level="full" separator=",">
         <property expression="get-property('countryName')" name="Request Payload"/>
       </log>

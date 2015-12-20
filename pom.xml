@@ -10,6 +10,7 @@
   <description>MavenParentProject</description>
   <modules>
     <module>Mediation</module>
+    <module>MediationResource</module>
     <module>MediationSub</module>
   </modules>
   <build>
